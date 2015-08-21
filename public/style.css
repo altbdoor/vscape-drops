@@ -1,0 +1,12 @@
+/* elements */
+html {overflow-y:scroll; min-width:320px}
+body {padding:50px 0}
+h1 {margin-top:0}
+.container h4 {margin-bottom:15px; padding-bottom:15px; border-bottom:1px solid #eee}
+
+/* bootstrap */
+.form-group {padding-top:15px}
+.panel-body > ul {padding-left:15px}
+
+/* custom */
+#search-form {margin:15px 0; padding:15px 0; border-width:1px 0; border-style:solid; border-color:#eee}
