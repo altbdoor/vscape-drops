@@ -62,6 +62,14 @@
 						drops: drops
 					})
 				);
+				
+				$('.drop-item-chance').each(function (index, item) {
+					$(item).parent().on('mouseover', function () {
+						$(item).html($(item).data('number'));
+					}).on('mouseout', function () {
+						$(item).html($(item).data('percent'));
+					});
+				});
 			}
 		});
 	});
@@ -78,7 +86,8 @@
 		
 		if (npcDropsFilter && npcDropsFilter[0] && npcDropsFilter[0].drops) {
 			var drops = [],
-				dropIndex = [];
+				dropIndex = []
+				dropCount = {};
 			
 			npcDropsFilter = npcDropsFilter[0].drops;
 			
@@ -93,16 +102,46 @@
 						return item.id == drop.id;
 					});
 				
+				if (dropCount[drop.chance]) {
+					dropCount[drop.chance]++;
+				}
+				else {
+					dropCount[drop.chance] = 1;
+				}
+				
 				if (dropItem && dropItem[0] && dropIndex.indexOf(dropKey) == -1) {
 					drops.push({
 						id: drop.id,
 						name: dropItem[0].name,
 						chance: drop.chance,
-						count: drop.count
+						chancePercent: 0,
+						count: (drop.count + '').split(',').join(', ')
 					});
 					
 					dropIndex.push(dropKey);
 				}
+			}
+			
+			for (var i=0; i<drops.length; i++) {
+				var drop = drops[i];
+				
+				if (drop.chance == 2) {
+					drop.chance = dropCount[2];
+				}
+				else if (drop.chance == 3) {
+					drop.chance = dropCount[3] * 20;
+				}
+				else if (drop.chance == 4 || drop.chance == 6 || drop.chance == 8) {
+					drop.chance = dropCount[drop.chance] * 100;
+				}
+				else if (drop.chance == 7 || drop.chance == 9) {
+					drop.chance = dropCount[drop.chance] * 128;
+				}
+				else if (drop.chance == 5) {
+					drop.chance = dropCount[5] * 200;
+				}
+				
+				drop.chancePercent = (1 / drop.chance * 100).toFixed(4);
 			}
 			
 			return drops;
