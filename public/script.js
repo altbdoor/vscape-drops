@@ -7,10 +7,12 @@
 		npcDefinitionsUrl = baseUrl + '/npcs/npcDefinitions.json',
 		npcDropsUrl = baseUrl + '/npcs/npcDrops.json',
 		itemsUrl = baseUrl + '/items.txt',
+		rareDropsUrl = baseUrl + '/npcs/rareDrops.json',
 		
 		npcDefinitions,
 		npcDrops,
 		items = [],
+		rareDrops,
 		
 		searchItem = $('#search-item').val(''),
 		searchItemResult = $('#search-item-result'),
@@ -31,7 +33,7 @@
 		count++;
 		$(modalLoadingCount).text(count);
 		
-		if (count == 3) {
+		if (count == 4) {
 			$(d.body).removeClass('modal-open');
 			$('.modal, .modal-backdrop').remove();
 		}
@@ -47,7 +49,7 @@
 		
 		$(searchMonster).typeahead({
 			source: data,
-			items: 5,
+			items: 10,
 			autoSelect: true,
 			displayText: getItemDisplay
 		}).change(function () {
@@ -86,10 +88,16 @@
 		
 		if (npcDropsFilter && npcDropsFilter[0] && npcDropsFilter[0].drops) {
 			var drops = [],
-				dropIndex = []
-				dropCount = {};
+				dropIndex = [],
+				dropCount = {},
+				
+				hasRareDrop = npcDropsFilter[0].rareTableAccess;
 			
 			npcDropsFilter = npcDropsFilter[0].drops;
+			
+			if (hasRareDrop) {
+				npcDropsFilter = npcDropsFilter.concat(rareDrops);
+			}
 			
 			for (var i=0; i<npcDropsFilter.length; i++) {
 				var drop = npcDropsFilter[i],
@@ -184,7 +192,7 @@
 		
 		$(searchItem).typeahead({
 			source: items,
-			items: 5,
+			items: 10,
 			autoSelect: true,
 			displayText: getItemDisplay
 		}).change(function () {
@@ -237,5 +245,10 @@
 			return [];
 		}
 	}
+	
+	$.getJSON(rareDropsUrl, function (data) {
+		finishLoad();
+		rareDrops = data.drops;
+	});
 	
 })(document, window, Mustache);
