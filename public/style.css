@@ -6,7 +6,10 @@ h1 {margin-top:0}
 
 /* bootstrap */
 .form-group {padding-top:15px}
+.panel-body {padding-bottom:5px}
 .panel-body > ul {padding-left:15px}
 
 /* custom */
 #search-form {min-height:400px}
+.drop-item:hover .drop-item-chance-number {display:inline}
+.drop-item:hover .drop-item-chance-percent {display:none}
