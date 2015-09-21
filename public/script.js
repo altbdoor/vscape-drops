@@ -1,11 +1,11 @@
 (function (d, w, mustache) {
-	var commit = 'd76c004',
-		baseUrl = '//cdn.rawgit.com/Odel/vscape/' + commit + '/vscape%20Server/datajson',
+	var commit,
+		baseUrl,
 		
-		npcDefinitionsUrl = baseUrl + '/npcs/npcDefinitions.json',
-		npcDropsUrl = baseUrl + '/npcs/npcDrops.json',
-		itemsUrl = baseUrl + '/items.txt',
-		rareDropsUrl = baseUrl + '/npcs/rareDrops.json',
+		npcDefinitionsUrl,
+		npcDropsUrl,
+		itemsUrl,
+		rareDropsUrl,
 		
 		npcDefinitions,
 		npcDrops,
@@ -24,6 +24,24 @@
 	
 	mustache.parse(tmplItem);
 	mustache.parse(tmplMonster);
+	
+	$.getJSON('//api.github.com/repos/Odel/vscape/commits/master', function (data) {
+		commit = data.sha;
+		baseUrl = '//cdn.rawgit.com/Odel/vscape/' + commit + '/vscape%20Server/datajson';
+		
+		$('#commit-link').text(commit.substr(0, 7)).attr('href', data.html_url);
+		
+		npcDefinitionsUrl = baseUrl + '/npcs/npcDefinitions.json';
+		npcDropsUrl = baseUrl + '/npcs/npcDrops.json';
+		itemsUrl = baseUrl + '/items.txt';
+		rareDropsUrl = baseUrl + '/npcs/rareDrops.json';
+		
+		fetchNpcDefinitions();
+		fetchNpcDrops();
+		fetchItems();
+		fetchRareDrops();
+	});
+	
 	
 	function finishLoad () {
 		var count = parseInt($(modalLoadingCount).text());
@@ -44,44 +62,48 @@
 		return item.name + ' (ID: ' + item.id + ')';
 	}
 	
-	$.getJSON(npcDefinitionsUrl, function (data) {
-		finishLoad();
-		
-		var unusedKeys = ['respawn', 'combat', 'hitpoints', 'maxHit', 'size', 'attackSpeed', 'attackAnim', 'standAnim', 'walkAnim', 'defenceAnim', 'deathAnim', 'attackBonus', 'defenceMelee', 'defenceRange', 'defenceMage', 'attackSound', 'blockSound', 'damageSound', 'deathSound', 'canWalk', 'canFollow', 'attackable', 'aggressive', 'canAttackBack', 'retreats', 'poisonous', 'poisonImmune'];
-		
-		for (var i=0; i<data.length; i++) {
-			for (var j=0; j<unusedKeys.length; j++) {
-				delete data[i][unusedKeys[j]];
-			}
-		}
-		
-		npcDefinitions = data;
-		
-		$(searchMonster).typeahead({
-			source: data,
-			items: 10,
-			autoSelect: true,
-			displayText: getItemDisplay
-		}).change(function () {
-			var current = $(searchMonster).typeahead('getActive');
+	function fetchNpcDefinitions () {
+		$.getJSON(npcDefinitionsUrl, function (data) {
+			finishLoad();
 			
-			if (current && $(searchMonster).val() == getItemDisplay(current)) {
-				var drops = getDropsFromNpcId(current.id);
-				
-				$(searchMonsterResult).removeClass('hide').html(
-					mustache.render(tmplMonster, {
-						item: current,
-						drops: drops
-					})
-				);
+			var unusedKeys = ['respawn', 'combat', 'hitpoints', 'maxHit', 'size', 'attackSpeed', 'attackAnim', 'standAnim', 'walkAnim', 'defenceAnim', 'deathAnim', 'attackBonus', 'defenceMelee', 'defenceRange', 'defenceMage', 'attackSound', 'blockSound', 'damageSound', 'deathSound', 'canWalk', 'canFollow', 'attackable', 'aggressive', 'canAttackBack', 'retreats', 'poisonous', 'poisonImmune'];
+			
+			for (var i=0; i<data.length; i++) {
+				for (var j=0; j<unusedKeys.length; j++) {
+					delete data[i][unusedKeys[j]];
+				}
 			}
+			
+			npcDefinitions = data;
+			
+			$(searchMonster).typeahead({
+				source: data,
+				items: 10,
+				autoSelect: true,
+				displayText: getItemDisplay
+			}).change(function () {
+				var current = $(searchMonster).typeahead('getActive');
+				
+				if (current && $(searchMonster).val() == getItemDisplay(current)) {
+					var drops = getDropsFromNpcId(current.id);
+					
+					$(searchMonsterResult).removeClass('hide').html(
+						mustache.render(tmplMonster, {
+							item: current,
+							drops: drops
+						})
+					);
+				}
+			});
 		});
-	});
+	}
 	
-	$.getJSON(npcDropsUrl, function (data) {
-		finishLoad();
-		npcDrops = data;
-	});
+	function fetchNpcDrops () {
+		$.getJSON(npcDropsUrl, function (data) {
+			finishLoad();
+			npcDrops = data;
+		});
+	}
 	
 	function getDropsFromNpcId (id) {
 		var npcDropsFilter = npcDrops.filter(function (item) {
@@ -162,64 +184,66 @@
 		}
 	}
 	
-	$.get(itemsUrl, function (data) {
-		finishLoad();
-		
-		data = data.split('\n');
-		
-		for (var i=0; i<data.length; i++) {
-			var itemArray = data[i].split(':'),
-				id = $.trim(itemArray[0]);
+	function fetchItems () {
+		$.get(itemsUrl, function (data) {
+			finishLoad();
 			
-			if (itemArray && itemArray[0] && itemArray[1]) {
-				var itemName = itemArray[1],
-					itemDesc = $.trim(itemName).match(/ [A-Z0-9].+/);
-				
-				if (itemDesc && itemDesc[0]) {
-					itemDesc = itemDesc[0];
-					itemName = itemArray[1].replace(itemDesc, '');
-				}
-				else {
-					itemDesc = itemName;
-				}
-				
-				itemName = $.trim(itemName);
-				
-				if (id == 985 || id == 986) {
-					itemName += ' (Tooth)';
-				}
-				else if (id == 987 || id == 988) {
-					itemName += ' (Loop)';
-				}
-				
-				items.push({
-					id: id,
-					name: itemName,
-					desc: itemDesc
-				});
-			}
-		}
-		
-		$(searchItem).typeahead({
-			source: items,
-			items: 10,
-			autoSelect: true,
-			displayText: getItemDisplay
-		}).change(function () {
-			var current = $(searchItem).typeahead('getActive');
+			data = data.split('\n');
 			
-			if (current && $(searchItem).val() == getItemDisplay(current)) {
-				var npcs = getNpcsFromDropId(current.id);
+			for (var i=0; i<data.length; i++) {
+				var itemArray = data[i].split(':'),
+					id = $.trim(itemArray[0]);
 				
-				$(searchItemResult).removeClass('hide').html(
-					mustache.render(tmplItem, {
-						item: current,
-						npcs: npcs
-					})
-				);
+				if (itemArray && itemArray[0] && itemArray[1]) {
+					var itemName = itemArray[1],
+						itemDesc = $.trim(itemName).match(/ [A-Z0-9].+/);
+					
+					if (itemDesc && itemDesc[0]) {
+						itemDesc = itemDesc[0];
+						itemName = itemArray[1].replace(itemDesc, '');
+					}
+					else {
+						itemDesc = itemName;
+					}
+					
+					itemName = $.trim(itemName);
+					
+					if (id == 985 || id == 986) {
+						itemName += ' (Tooth)';
+					}
+					else if (id == 987 || id == 988) {
+						itemName += ' (Loop)';
+					}
+					
+					items.push({
+						id: id,
+						name: itemName,
+						desc: itemDesc
+					});
+				}
 			}
+			
+			$(searchItem).typeahead({
+				source: items,
+				items: 10,
+				autoSelect: true,
+				displayText: getItemDisplay
+			}).change(function () {
+				var current = $(searchItem).typeahead('getActive');
+				
+				if (current && $(searchItem).val() == getItemDisplay(current)) {
+					var npcs = getNpcsFromDropId(current.id);
+					
+					$(searchItemResult).removeClass('hide').html(
+						mustache.render(tmplItem, {
+							item: current,
+							npcs: npcs
+						})
+					);
+				}
+			});
 		});
-	});
+	}
 	
 	function getNpcsFromDropId (id) {
 		var npcDropsFilter = npcDrops.filter(function (item) {
@@ -256,16 +280,18 @@
 		}
 	}
 	
-	$.getJSON(rareDropsUrl, function (data) {
-		finishLoad();
-		
-		data = data.drops;
-		
-		for (var i=0; i<data.length; i++) {
-			data[i]['isRare'] = true;
-		}
-		
-		rareDrops = data;
-	});
+	function fetchRareDrops () {
+		$.getJSON(rareDropsUrl, function (data) {
+			finishLoad();
+			
+			data = data.drops;
+			
+			for (var i=0; i<data.length; i++) {
+				data[i]['isRare'] = true;
+			}
+			
+			rareDrops = data;
+		});
+	}
 	
 })(document, window, Mustache);
