@@ -25,7 +25,7 @@
 	mustache.parse(tmplItem);
 	mustache.parse(tmplMonster);
 	
-	$.getJSON('//api.github.com/repos/Odel/vscape/commits/master', function (data) {
+	$.getJSON('https://api.github.com/repos/Odel/vscape/commits/master', function (data) {
 		commit = data.sha;
 		baseUrl = '//cdn.rawgit.com/Odel/vscape/' + commit + '/vscape%20Server/datajson';
 		
