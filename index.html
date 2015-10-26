@@ -34,7 +34,20 @@
 				
 				<div id="search-form" class="row">
 					<div class="col-sm-12">
-						<p>Commit version: <a id="commit-link" href="javascript:void(0)">Loading...</a></p>
+						<p>
+							Latest commit: <a id="commit-link" href="javascript:void(0)">Loading...</a>
+							[<a id="commit-info-trigger" href="javascript:void(0)" title="What's this?">?</a>]
+						</p>
+						
+						<div id="commit-info-box" class="well small hide">
+							<p>
+								The latest commit version is based on the <a href="https://github.com/Odel/vscape">/v/scape GitHub repository</a>. Please note that the repository only holds item drop information now. This website only pulls the item drop information, and provides a search interface.
+							</p>
+							
+							<p>
+								Since the primary repository is not in GitHub, the /v/scape developers might be a little late in updating the item drop information into GitHub. Therefore, the information presented here might not be accurate while you are playing. Keep that in mind.
+							</p>
+						</div>
 					</div>
 					<div class="col-sm-6">
 						<div class="form-group">

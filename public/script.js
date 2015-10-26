@@ -1,6 +1,5 @@
 (function (d, w, mustache) {
-	var commit,
-		baseUrl,
+	var baseUrl,
 		
 		npcDefinitionsUrl,
 		npcDropsUrl,
@@ -26,10 +25,14 @@
 	mustache.parse(tmplMonster);
 	
 	$.getJSON('https://api.github.com/repos/Odel/vscape/commits/master', function (data) {
-		commit = data.sha;
+		var commit = data.sha,
+			author = data.commit.author.name,
+			date = data.commit.author.date;
+		
 		baseUrl = '//cdn.rawgit.com/Odel/vscape/' + commit + '/vscape%20Server/datajson';
 		
-		$('#commit-link').text(commit.substr(0, 7)).attr('href', data.html_url);
+		$('#commit-link').html('<b>' + commit.substr(0, 7) + '</b> by <b>' + author + '</b> on <b>' + date + '</b>')
+			.attr('href', data.html_url);
 		
 		npcDefinitionsUrl = baseUrl + '/npcs/npcDefinitions.json';
 		npcDropsUrl = baseUrl + '/npcs/npcDrops.json';
@@ -293,5 +296,9 @@
 			rareDrops = data;
 		});
 	}
+	
+	$('#commit-info-trigger').on('click', function () {
+		$('#commit-info-box').toggleClass('hide');
+	});
 	
 })(document, window, Mustache);
