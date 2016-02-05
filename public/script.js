@@ -24,25 +24,32 @@
 	mustache.parse(tmplItem);
 	mustache.parse(tmplMonster);
 	
-	$.getJSON('https://api.github.com/repos/Odel/vscape/commits/master', function (data) {
-		var commit = data.sha,
-			author = data.commit.author.name,
-			date = data.commit.author.date;
-		
-		baseUrl = '//cdn.rawgit.com/Odel/vscape/' + commit + '/vscape%20Server/datajson';
-		
-		$('#commit-link').html('<b>' + commit.substr(0, 7) + '</b> by <b>' + author + '</b> on <b>' + date + '</b>')
-			.attr('href', data.html_url);
-		
-		npcDefinitionsUrl = baseUrl + '/npcs/npcDefinitions.json';
-		npcDropsUrl = baseUrl + '/npcs/npcDrops.json';
-		itemsUrl = baseUrl + '/items.txt';
-		rareDropsUrl = baseUrl + '/npcs/rareDrops.json';
-		
-		fetchNpcDefinitions();
-		fetchNpcDrops();
-		fetchItems();
-		fetchRareDrops();
+	$.ajax({
+		beforeSend: function (request) {
+			request.setRequestHeader('Accept', 'application/vnd.github.v3+json');
+		},
+		dataType: 'json',
+		url: 'https://api.github.com/repos/Odel/vscape/commits/master',
+		success: function (data) {
+			var commit = data.sha,
+				author = data.commit.author.name,
+				date = data.commit.author.date;
+			
+			baseUrl = '//cdn.rawgit.com/Odel/vscape/' + commit + '/vscape%20Server/datajson';
+			
+			$('#commit-link').html('<b>' + commit.substr(0, 7) + '</b> by <b>' + author + '</b> on <b>' + date + '</b>')
+				.attr('href', data.html_url);
+			
+			npcDefinitionsUrl = baseUrl + '/npcs/npcDefinitions.json';
+			npcDropsUrl = baseUrl + '/npcs/npcDrops.json';
+			itemsUrl = baseUrl + '/items.txt';
+			rareDropsUrl = baseUrl + '/npcs/rareDrops.json';
+			
+			fetchNpcDefinitions();
+			fetchNpcDrops();
+			fetchItems();
+			fetchRareDrops();
+		}
 	});
 	
 	
