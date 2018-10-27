@@ -3,9 +3,9 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	
+
 	<title>/v/scape Drops · altbdoor.github.io</title>
-	
+
 	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 	<link rel="stylesheet" href="public/style.css">
 </head>
@@ -23,27 +23,27 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<div class="modal-backdrop fade in"></div>
-	
+
 	<div class="container">
 		<div class="row">
 			<div class="col-md-8 col-md-offset-2">
 				<h1>/v/scape Drops</h1>
 				<h4>A simple search interface for in game drops</h4>
-				
+
 				<div id="search-form" class="row">
 					<div class="col-sm-12">
 						<p>
 							Latest commit: <a id="commit-link" href="javascript:void(0)">Loading...</a>
 							[<a id="commit-info-trigger" href="javascript:void(0)" title="What's this?">?</a>]
 						</p>
-						
+
 						<div id="commit-info-box" class="well small hide">
 							<p>
 								The latest commit version is based on the <a href="https://github.com/Odel/vscape">/v/scape GitHub repository</a>. Please note that the repository only holds item drop information now. This website only pulls the item drop information, and provides a search interface.
 							</p>
-							
+
 							<p>
 								Since the primary repository is not in GitHub, the /v/scape developers might be a little late in updating the item drop information into GitHub. Therefore, the information presented here might not be accurate while you are playing. Keep that in mind.
 							</p>
@@ -54,7 +54,7 @@
 							<label>Search from Monster Name</label>
 							<input type="text" id="search-monster" class="form-control" placeholder="E.g. Blue dragon">
 						</div>
-						
+
 						<div id="search-monster-result" class="panel panel-default">
 							<div class="panel-body small text-muted">
 								<p>Blue rows are rare drop items! Try searching for Bloodveld!</p>
@@ -66,7 +66,7 @@
 							<label>Search from Item Name</label>
 							<input type="text" id="search-item" class="form-control" placeholder="E.g. Blue dragon scale">
 						</div>
-						
+
 						<div id="search-item-result" class="panel panel-default">
 							<div class="panel-body small text-muted">
 								<p>Searching for a rare drop item will not return its monsters for now.</p>
@@ -75,9 +75,9 @@
 						</div>
 					</div>
 				</div>
-				
+
 				<hr>
-				
+
 				<div class="text-center small">
 					<ul class="list list-inline">
 						<li><a href="https://github.com/altbdoor/vscape-drops">GitHub</a></li>
@@ -85,32 +85,31 @@
 						<li><a href="https://github.com/bassjobsen/Bootstrap-3-Typeahead">Bootstrap 3 Typeahead</a></li>
 						<li><a href="http://mustache.github.io/">Mustache</a></li>
 						<li><a href="https://github.com/Odel/vscape">/v/scape</a></li>
-						<li><a href="http://rawgit.com/">RawGit</a></li>
 					</ul>
 				</div>
 			</div>
 		</div>
 	</div>
-	
+
 	<script id="tmpl-monster" type="text/plain">
 		<div class="panel-heading">
 			{{ item.name }} (ID: {{ item.id }})
 		</div>
 		<div class="panel-body small">
 			<p>{{ item.examine }}</p>
-			
+
 			<b>Weakness:</b><br>
 			<ul>
 				<li>Melee: {{ item.meleeWeakness }}</li>
 				<li>Magic: {{ item.magicWeakness }}</li>
 				<li>
-					Ranged: 
+					Ranged:
 					{{#item.rangedWeakness}}YES{{/item.rangedWeakness}}
 					{{^item.rangedWeakness}}NO{{/item.rangedWeakness}}
 				</li>
 			</ul>
 		</div>
-		
+
 		<table class="table table-condensed table-hover small">
 			<thead>
 				<tr>
@@ -138,7 +137,7 @@
 			</tbody>
 		</table>
 	</script>
-	
+
 	<script id="tmpl-item" type="text/plain">
 		<div class="panel-heading">
 			{{ item.name }} (ID: {{ item.id }})
@@ -166,10 +165,10 @@
 			</tbody>
 		</table>
 	</script>
-	
+
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/mustache.js/2.1.3/mustache.min.js"></script>
-	<script src="public/bootstrap3-typeahead.min.js"></script>
+	<script src="//cdn.jsdelivr.net/gh/bassjobsen/Bootstrap-3-Typeahead@609b08eab5883bd53fdae8b78016dd07ac4354ba/bootstrap3-typeahead.min.js"></script>
 	<script src="public/script.js"></script>
 </body>
 </html>
